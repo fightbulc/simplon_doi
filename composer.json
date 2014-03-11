@@ -1,0 +1,28 @@
+{
+  "name": "simplon/doi",
+  "description": "Simple double opt-in handler w/ possibility to inject your own DB and Email handler",
+  "homepage": "https://github.com/fightbulc/simplon_doi",
+  "version": "0.0.1",
+  "type": "library",
+  "keywords": ["double opt-in", "verification", "database", "email"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tino Ehrich",
+      "email": "opensource@efides.com",
+      "role": "developer"
+    }
+  ],
+
+  "require": {
+    "php": ">=5.4",
+    "simplon/mysql": "0.2.*",
+    "simplon/email": "0.1.*"
+  },
+
+  "autoload": {
+    "psr-0": {
+      "Simplon\\Doi": "src/"
+    }
+  }
+}
