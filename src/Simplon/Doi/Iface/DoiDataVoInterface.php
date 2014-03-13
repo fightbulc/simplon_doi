@@ -2,6 +2,8 @@
 
     namespace Simplon\Doi\Iface;
 
+    use Simplon\Doi\DoiConstants;
+
     interface DoiDataVoInterface
     {
         /**
@@ -80,4 +82,18 @@
          * @return int
          */
         public function getUpdatedAt();
+
+        /**
+         * @param int $allowMaxHours
+         *
+         * @return int
+         */
+        public function getTimeOutLeft($allowMaxHours = DoiConstants::TOKEN_TIMEOUT_DEFAULT);
+
+        /**
+         * @param int $allowMaxHours
+         *
+         * @return bool
+         */
+        public function isTimedOut($allowMaxHours = DoiConstants::TOKEN_TIMEOUT_DEFAULT);
     } 

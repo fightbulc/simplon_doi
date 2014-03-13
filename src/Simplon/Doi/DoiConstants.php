@@ -8,6 +8,9 @@
         CONST STATUS_SENT = 1;
         CONST STATUS_SENT_ERR = 2;
         CONST STATUS_USED = 3;
+        CONST STATUS_TIMEOUT = 4;
+
+        CONST TOKEN_TIMEOUT_DEFAULT = 24;
 
         // --------------------------------------
 
@@ -22,4 +25,7 @@
 
         CONST ERR_VALIDATION_HAS_BEEN_USED_CODE = 3000;
         CONST ERR_VALIDATION_HAS_BEEN_USED_MESSAGE = 'This token has already been used.';
+
+        CONST ERR_VALIDATION_HAS_MAXED_OUT_HOURS_CODE = 3001;
+        CONST ERR_VALIDATION_HAS_MAXED_OUT_HOURS_MESSAGE = 'Token timed out. Age is older than {{hours}} hours.';
     } 

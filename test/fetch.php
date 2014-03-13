@@ -9,4 +9,4 @@
     /** @var \Sample\SampleConnectorDataVo $doiConnectorDataVo */
     $doiConnectorDataVo = $doiDataVo->getConnectorDataVo();
 
-    var_dump([$doiDataVo, $doiConnectorDataVo->getFirstname()]);
+    var_dump([$doiDataVo, $doiDataVo->getTimeOutLeft()]);

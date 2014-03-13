@@ -188,4 +188,36 @@
 
             return $this;
         }
+
+        // ######################################
+
+        /**
+         * @param int $allowMaxHours
+         *
+         * @return int
+         */
+        public function getTimeOutLeft($allowMaxHours = DoiConstants::TOKEN_TIMEOUT_DEFAULT)
+        {
+            $timeLimitSeconds = $this->getCreatedAt() + ($allowMaxHours * 60 * 60);
+            $timeOutLeft = $timeLimitSeconds - time();
+
+            return $timeOutLeft <= 0 ? 0 : $timeOutLeft;
+        }
+
+        // ######################################
+
+        /**
+         * @param int $allowMaxHours
+         *
+         * @return bool
+         */
+        public function isTimedOut($allowMaxHours = DoiConstants::TOKEN_TIMEOUT_DEFAULT)
+        {
+            if ($this->getTimeOutLeft($allowMaxHours) === 0)
+            {
+                return TRUE;
+            }
+
+            return FALSE;
+        }
     } 
