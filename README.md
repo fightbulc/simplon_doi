@@ -11,7 +11,7 @@
 
 A simple double opt-in verification w/ injectable DB and Email handler.
 
-Current version: 0.0.1
+Current version: 0.0.3
 
 -------------------------------------------------
 
