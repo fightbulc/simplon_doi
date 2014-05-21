@@ -57,6 +57,11 @@
         /**
          * @return bool
          */
+        public function hasValidStatus();
+
+        /**
+         * @return bool
+         */
         public function hasBeenUsed();
 
         /**
@@ -96,4 +101,9 @@
          * @return bool
          */
         public function isTimedOut($allowMaxHours = DoiConstants::TOKEN_TIMEOUT_DEFAULT);
+
+        /**
+         * @return bool
+         */
+        public function isUsable();
     } 
