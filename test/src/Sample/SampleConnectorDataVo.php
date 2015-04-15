@@ -1,98 +1,98 @@
 <?php
 
-    namespace Sample;
+namespace Sample;
 
-    use Simplon\Doi\Vo\DoiConnectorDataVo;
+use Simplon\Doi\Vo\DoiConnectorDataVo;
 
-    class SampleConnectorDataVo extends DoiConnectorDataVo
+class SampleConnectorDataVo extends DoiConnectorDataVo
+{
+    protected $_firstname;
+    protected $_lastname;
+
+    // ######################################
+
+    /**
+     * @param array $data
+     *
+     * @return $this
+     */
+    public function import(array $data)
     {
-        protected $_firstname;
-        protected $_lastname;
+        parent::import($data);
 
-        // ######################################
-
-        /**
-         * @param array $data
-         *
-         * @return $this
-         */
-        public function import(array $data)
+        if (isset($data['firstname']))
         {
-            parent::import($data);
-
-            if (isset($data['firstname']))
-            {
-                $this->setFirstname($data['firstname']);
-            }
-
-            if (isset($data['lastname']))
-            {
-                $this->setLastname($data['lastname']);
-            }
-
-            return $this;
+            $this->setFirstname($data['firstname']);
         }
 
-        // ######################################
-
-        /**
-         * @return array
-         */
-        public function export()
+        if (isset($data['lastname']))
         {
-            $customExport = [
-                'firstname' => $this->getFirstname(),
-                'lastname'  => $this->getLastname(),
-            ];
-
-            return array_merge($customExport, parent::export());
+            $this->setLastname($data['lastname']);
         }
 
-        // ######################################
+        return $this;
+    }
 
-        /**
-         * @return string
-         */
-        public function getFirstname()
-        {
-            return (string)$this->_firstname;
-        }
+    // ######################################
 
-        // ######################################
+    /**
+     * @return array
+     */
+    public function export()
+    {
+        $customExport = [
+            'firstname' => $this->getFirstname(),
+            'lastname'  => $this->getLastname(),
+        ];
 
-        /**
-         * @param mixed $firstname
-         *
-         * @return SampleConnectorDataVo
-         */
-        public function setFirstname($firstname)
-        {
-            $this->_firstname = $firstname;
+        return array_merge($customExport, parent::export());
+    }
 
-            return $this;
-        }
+    // ######################################
 
-        // ######################################
+    /**
+     * @return string
+     */
+    public function getFirstname()
+    {
+        return (string)$this->_firstname;
+    }
 
-        /**
-         * @return string
-         */
-        public function getLastname()
-        {
-            return (string)$this->_lastname;
-        }
+    // ######################################
 
-        // ######################################
+    /**
+     * @param mixed $firstname
+     *
+     * @return SampleConnectorDataVo
+     */
+    public function setFirstname($firstname)
+    {
+        $this->_firstname = $firstname;
 
-        /**
-         * @param mixed $lastname
-         *
-         * @return SampleConnectorDataVo
-         */
-        public function setLastname($lastname)
-        {
-            $this->_lastname = $lastname;
+        return $this;
+    }
 
-            return $this;
-        }
-    } 
+    // ######################################
+
+    /**
+     * @return string
+     */
+    public function getLastname()
+    {
+        return (string)$this->_lastname;
+    }
+
+    // ######################################
+
+    /**
+     * @param mixed $lastname
+     *
+     * @return SampleConnectorDataVo
+     */
+    public function setLastname($lastname)
+    {
+        $this->_lastname = $lastname;
+
+        return $this;
+    }
+}

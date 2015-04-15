@@ -27,12 +27,10 @@ class Doi
 
     /**
      * @param DoiDatabaseInterface $doiDatabaseInterface
-     * @param DoiEmailInterface    $doiEmailInterface
      */
-    public function __construct(DoiDatabaseInterface $doiDatabaseInterface, DoiEmailInterface $doiEmailInterface)
+    public function __construct(DoiDatabaseInterface $doiDatabaseInterface)
     {
         $this->doiDatabaseHandler = $doiDatabaseInterface;
-        $this->doiEmailHandler = $doiEmailInterface;
     }
 
     /**
@@ -78,12 +76,6 @@ class Doi
                 DoiConstants::ERR_DATABASE_COULD_NOT_SAVE_DATA_MESSAGE
             );
         }
-
-        // ----------------------------------
-
-        // send email
-
-        $this->sendEmail($doiDataVo);
 
         // ----------------------------------
 
@@ -168,12 +160,51 @@ class Doi
     }
 
     /**
-     * @param string $token
+     * @param DoiEmailInterface  $doiEmailInterface
+     * @param DoiDataVoInterface $doiDataVo
+     *
+     * @return bool
+     * @throws DoiException
+     */
+    public function sendEmail(DoiEmailInterface $doiEmailInterface, DoiDataVoInterface $doiDataVo)
+    {
+        $response = $doiEmailInterface->send($doiDataVo);
+
+        if ($response === false)
+        {
+            $doiDataVo
+                ->setStatus(DoiConstants::STATUS_SENT_ERR)
+                ->setUpdatedAt(time());
+
+            $this->update($doiDataVo);
+
+            throw new DoiException(
+                DoiConstants::ERR_EMAIL_COULD_NOT_SEND_CODE,
+                DoiConstants::ERR_EMAIL_COULD_NOT_SEND_MESSAGE
+            );
+        }
+
+        // ----------------------------------
+
+        $doiDataVo
+            ->setStatus(DoiConstants::STATUS_SENT)
+            ->setUpdatedAt(time());
+
+        $this->update($doiDataVo);
+
+        // ----------------------------------
+
+        return true;
+    }
+
+    /**
+     * @param DoiEmailInterface $doiEmailInterface
+     * @param string            $token
      *
      * @return bool|DoiDataVoInterface
      * @throws DoiException
      */
-    public function resend($token)
+    public function resendEmail(DoiEmailInterface $doiEmailInterface, $token)
     {
         // fetch data
 
@@ -183,7 +214,7 @@ class Doi
 
         // send email
 
-        $this->sendEmail($doiDataVo);
+        $this->sendEmail($doiEmailInterface, $doiDataVo);
 
         // ----------------------------------
 
@@ -196,14 +227,6 @@ class Doi
     private function getDoiDatabaseHandler()
     {
         return $this->doiDatabaseHandler;
-    }
-
-    /**
-     * @return DoiEmailInterface
-     */
-    private function getDoiEmailHandler()
-    {
-        return $this->doiEmailHandler;
     }
 
     /**
@@ -244,45 +267,6 @@ class Doi
                 DoiConstants::ERR_DATABASE_COULD_NOT_SAVE_DATA_MESSAGE
             );
         }
-
-        return true;
-    }
-
-    /**
-     * @param DoiDataVoInterface $doiDataVo
-     *
-     * @return bool
-     * @throws DoiException
-     */
-    private function sendEmail(DoiDataVoInterface $doiDataVo)
-    {
-        $response = $this
-            ->getDoiEmailHandler()
-            ->send($doiDataVo);
-
-        if ($response === false)
-        {
-            $doiDataVo
-                ->setStatus(DoiConstants::STATUS_SENT_ERR)
-                ->setUpdatedAt(time());
-
-            $this->update($doiDataVo);
-
-            throw new DoiException(
-                DoiConstants::ERR_EMAIL_COULD_NOT_SEND_CODE,
-                DoiConstants::ERR_EMAIL_COULD_NOT_SEND_MESSAGE
-            );
-        }
-
-        // ----------------------------------
-
-        $doiDataVo
-            ->setStatus(DoiConstants::STATUS_SENT)
-            ->setUpdatedAt(time());
-
-        $this->update($doiDataVo);
-
-        // ----------------------------------
 
         return true;
     }

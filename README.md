@@ -62,13 +62,12 @@ The following steps create a ```Doi```, save it to the database and send an emai
 ```php
 require __DIR__ . '/vendor/autoload.php';
 
-// Doi instance w/ our handlers
+// Doi instance with database handler
 $doi = new \Simplon\Doi\Doi(
-    new \Sample\Handler\SampleDatabaseHandler(),
-    new \Sample\Handler\SampleEmailHandler()
+    new \Sample\Handler\SampleDatabaseHandler()
 );
 
-// set custom connector data
+// set custom connector data (needs at least an email field)
 $sampleConnectorDataVo = (new \Sample\SampleConnectorDataVo())
     ->setEmail('tom@hamburg.de')
     ->setFirstname('Tom')
@@ -79,8 +78,29 @@ $createVo = (new \Simplon\Doi\Vo\DoiCreateVo())
     ->setConnector('EMVAL')
     ->setConnectorDataVo($sampleConnectorDataVo);
 
-// create entry
+// create entry in database
 $doiDataVo = $doi->create($createVo);
+```
+
+Now you have all related data within ```$doiDataVo``` and its up to you how you want to push the Doi-URL to the user.
+
+### Sending Doi via email
+
+Doi can also take care of sending an email to the user with all relevant data. For this you need to make use of the ```DoiEmailInterface```.
+Following an example of how to send an email.
+
+```php
+// we use $doiDataVo from above
+$doi->sendEmail(
+    new \Sample\Handler\SampleEmailHandler(),
+    $doiDataVo
+);
+
+// you also have the possibility to resend an email
+$doi->resendEmail(
+    new \Sample\Handler\SampleEmailHandler(),
+    $doiToken
+);
 ```
 
 #### Validating a Doi
