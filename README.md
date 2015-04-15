@@ -11,8 +11,6 @@
 
 A simple double opt-in verification w/ injectable DB and Email handler.
 
-Current version: 0.0.3
-
 -------------------------------------------------
 
 ### Intro
@@ -34,7 +32,7 @@ Get the package via [Composer](http://getcomposer.org):
 ```json
 {
     "require": {
-        "simplon/doi": "0.0.*"
+        "simplon/doi": "*"
     }
 }
 ```
@@ -119,7 +117,7 @@ $doiDataVo = $doi->validate($token); // throws DoiException or returns DoiDataVo
 
 Cirrus is freely distributable under the terms of the MIT license.
 
-Copyright (c) 2014 Tino Ehrich ([tino@bigpun.me](mailto:tino@bigpun.me))
+Copyright (c) 2015 Tino Ehrich ([tino@bigpun.me](mailto:tino@bigpun.me))
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
