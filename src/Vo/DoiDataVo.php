@@ -15,8 +15,6 @@ class DoiDataVo implements DoiDataVoInterface
     protected $_createdAt;
     protected $_updatedAt;
 
-    // ######################################
-
     /**
      * @return string
      */
@@ -24,8 +22,6 @@ class DoiDataVo implements DoiDataVoInterface
     {
         return (string)$this->_token;
     }
-
-    // ######################################
 
     /**
      * @param mixed $token
@@ -39,8 +35,6 @@ class DoiDataVo implements DoiDataVoInterface
         return $this;
     }
 
-    // ######################################
-
     /**
      * @return string
      */
@@ -48,8 +42,6 @@ class DoiDataVo implements DoiDataVoInterface
     {
         return (string)$this->_connector;
     }
-
-    // ######################################
 
     /**
      * @param mixed $connector
@@ -63,8 +55,6 @@ class DoiDataVo implements DoiDataVoInterface
         return $this;
     }
 
-    // ######################################
-
     /**
      * @param DoiConnectorDataVoInterface $sampleConnectorDataVo
      *
@@ -77,8 +67,6 @@ class DoiDataVo implements DoiDataVoInterface
         return $this;
     }
 
-    // ######################################
-
     /**
      * @return DoiConnectorDataVoInterface
      */
@@ -86,8 +74,6 @@ class DoiDataVo implements DoiDataVoInterface
     {
         return $this->_connectorDataVo;
     }
-
-    // ######################################
 
     /**
      * @return int
@@ -97,8 +83,6 @@ class DoiDataVo implements DoiDataVoInterface
         return (int)$this->_status;
     }
 
-    // ######################################
-
     /**
      * @return bool
      */
@@ -106,8 +90,6 @@ class DoiDataVo implements DoiDataVoInterface
     {
         return in_array($this->getStatus(), [DoiConstants::STATUS_CREATED, DoiConstants::STATUS_SENT]);
     }
-
-    // ######################################
 
     /**
      * @return bool
@@ -117,8 +99,6 @@ class DoiDataVo implements DoiDataVoInterface
         return $this->getStatus() === DoiConstants::STATUS_USED;
     }
 
-    // ######################################
-
     /**
      * @return bool
      */
@@ -127,8 +107,6 @@ class DoiDataVo implements DoiDataVoInterface
         return $this->getStatus() === DoiConstants::STATUS_SENT;
     }
 
-    // ######################################
-
     /**
      * @return bool
      */
@@ -136,8 +114,6 @@ class DoiDataVo implements DoiDataVoInterface
     {
         return $this->getStatus() === DoiConstants::STATUS_SENT_ERR;
     }
-
-    // ######################################
 
     /**
      * @param mixed $status
@@ -151,8 +127,6 @@ class DoiDataVo implements DoiDataVoInterface
         return $this;
     }
 
-    // ######################################
-
     /**
      * @return int
      */
@@ -160,8 +134,6 @@ class DoiDataVo implements DoiDataVoInterface
     {
         return (int)$this->_createdAt;
     }
-
-    // ######################################
 
     /**
      * @param mixed $createdAt
@@ -175,8 +147,6 @@ class DoiDataVo implements DoiDataVoInterface
         return $this;
     }
 
-    // ######################################
-
     /**
      * @return int
      */
@@ -184,8 +154,6 @@ class DoiDataVo implements DoiDataVoInterface
     {
         return (int)$this->_updatedAt;
     }
-
-    // ######################################
 
     /**
      * @param mixed $updateAt
@@ -198,8 +166,6 @@ class DoiDataVo implements DoiDataVoInterface
 
         return $this;
     }
-
-    // ######################################
 
     /**
      * @param int $allowMaxHours
@@ -214,8 +180,6 @@ class DoiDataVo implements DoiDataVoInterface
         return $timeOutLeft <= 0 ? 0 : $timeOutLeft;
     }
 
-    // ######################################
-
     /**
      * @param int $allowMaxHours
      *
@@ -223,20 +187,19 @@ class DoiDataVo implements DoiDataVoInterface
      */
     public function isTimedOut($allowMaxHours = DoiConstants::TOKEN_TIMEOUT_DEFAULT)
     {
-        if ($this->getTimeOutLeft($allowMaxHours) === 0) {
+        if ($this->getTimeOutLeft($allowMaxHours) === 0)
+        {
             return true;
         }
 
         return false;
     }
 
-    // ######################################
-
     /**
      * @return bool
      */
     public function isUsable()
     {
-        return $this->hasValidStatus() && $this->isTimedOut() === FALSE;
+        return $this->hasValidStatus() && $this->isTimedOut() === false;
     }
 } 

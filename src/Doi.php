@@ -8,128 +8,32 @@ use Simplon\Doi\Iface\DoiEmailInterface;
 use Simplon\Doi\Vo\DoiCreateVo;
 use Simplon\Doi\Vo\DoiDataVo;
 
+/**
+ * Doi
+ * @package Simplon\Doi
+ * @author  Tino Ehrich (tino@bigpun.me)
+ */
 class Doi
 {
-    protected $_doiDatabaseHandler;
-    protected $_doiEmailHandler;
+    /**
+     * @var DoiDatabaseInterface
+     */
+    private $doiDatabaseHandler;
 
-    // ######################################
+    /**
+     * @var DoiEmailInterface
+     */
+    private $doiEmailHandler;
 
     /**
      * @param DoiDatabaseInterface $doiDatabaseInterface
-     * @param DoiEmailInterface $doiEmailInterface
+     * @param DoiEmailInterface    $doiEmailInterface
      */
     public function __construct(DoiDatabaseInterface $doiDatabaseInterface, DoiEmailInterface $doiEmailInterface)
     {
-        $this->_doiDatabaseHandler = $doiDatabaseInterface;
-        $this->_doiEmailHandler = $doiEmailInterface;
+        $this->doiDatabaseHandler = $doiDatabaseInterface;
+        $this->doiEmailHandler = $doiEmailInterface;
     }
-
-    // ######################################
-
-    /**
-     * @return Iface\DoiDatabaseInterface
-     */
-    protected function _getDoiDatabaseHandler()
-    {
-        return $this->_doiDatabaseHandler;
-    }
-
-    // ######################################
-
-    /**
-     * @return Iface\DoiEmailInterface
-     */
-    protected function _getDoiEmailHandler()
-    {
-        return $this->_doiEmailHandler;
-    }
-
-    // ######################################
-
-    /**
-     * @param $length
-     * @param $characters
-     *
-     * @return string
-     */
-    protected function _createToken($length, $characters)
-    {
-        $randomString = '';
-
-        // generate token
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, strlen($characters) - 1)];
-        }
-
-        return $randomString;
-    }
-
-    // ######################################
-
-    /**
-     * @param DoiDataVoInterface $doiDataVo
-     *
-     * @return bool
-     * @throws DoiException
-     */
-    protected function _update(DoiDataVoInterface $doiDataVo)
-    {
-        $response = $this
-            ->_getDoiDatabaseHandler()
-            ->update($doiDataVo);
-
-        if ($response === false) {
-            throw new DoiException(
-                DoiConstants::ERR_DATABASE_COULD_NOT_SAVE_DATA_CODE,
-                DoiConstants::ERR_DATABASE_COULD_NOT_SAVE_DATA_MESSAGE
-            );
-        }
-
-        return true;
-    }
-
-    // ######################################
-
-    /**
-     * @param DoiDataVoInterface $doiDataVo
-     *
-     * @return bool
-     * @throws DoiException
-     */
-    protected function _sendEmail(DoiDataVoInterface $doiDataVo)
-    {
-        $response = $this
-            ->_getDoiEmailHandler()
-            ->send($doiDataVo);
-
-        if ($response === false) {
-            $doiDataVo
-                ->setStatus(DoiConstants::STATUS_SENT_ERR)
-                ->setUpdatedAt(time());
-
-            $this->_update($doiDataVo);
-
-            throw new DoiException(
-                DoiConstants::ERR_EMAIL_COULD_NOT_SEND_CODE,
-                DoiConstants::ERR_EMAIL_COULD_NOT_SEND_MESSAGE
-            );
-        }
-
-        // ----------------------------------
-
-        $doiDataVo
-            ->setStatus(DoiConstants::STATUS_SENT)
-            ->setUpdatedAt(time());
-
-        $this->_update($doiDataVo);
-
-        // ----------------------------------
-
-        return true;
-    }
-
-    // ######################################
 
     /**
      * @param DoiCreateVo $doiCreateVo
@@ -141,7 +45,7 @@ class Doi
     {
         // create token
 
-        $token = $this->_createToken(
+        $token = $this->createToken(
             $doiCreateVo->getTokenLenght(),
             $doiCreateVo->getTokenCharacters()
         );
@@ -164,10 +68,11 @@ class Doi
         // save in database
 
         $response = $this
-            ->_getDoiDatabaseHandler()
+            ->getDoiDatabaseHandler()
             ->save($doiDataVo);
 
-        if ($response === false) {
+        if ($response === false)
+        {
             throw new DoiException(
                 DoiConstants::ERR_DATABASE_COULD_NOT_SAVE_DATA_CODE,
                 DoiConstants::ERR_DATABASE_COULD_NOT_SAVE_DATA_MESSAGE
@@ -178,14 +83,12 @@ class Doi
 
         // send email
 
-        $this->_sendEmail($doiDataVo);
+        $this->sendEmail($doiDataVo);
 
         // ----------------------------------
 
         return $doiDataVo;
     }
-
-    // ######################################
 
     /**
      * @param string $token
@@ -196,10 +99,11 @@ class Doi
     public function fetch($token)
     {
         $doiDataVo = $this
-            ->_getDoiDatabaseHandler()
+            ->getDoiDatabaseHandler()
             ->fetch($token);
 
-        if ($doiDataVo === false) {
+        if ($doiDataVo === false)
+        {
             throw new DoiException(
                 DoiConstants::ERR_DATABASE_COULD_NOT_FETCH_DATA_CODE,
                 DoiConstants::ERR_DATABASE_COULD_NOT_FETCH_DATA_MESSAGE
@@ -209,11 +113,9 @@ class Doi
         return $doiDataVo;
     }
 
-    // ######################################
-
     /**
      * @param string $token
-     * @param int $allowMaxHours
+     * @param int    $allowMaxHours
      *
      * @return bool|DoiDataVoInterface
      * @throws DoiException
@@ -224,7 +126,8 @@ class Doi
 
         $doiDataVo = $this->fetch($token);
 
-        if ($doiDataVo->hasBeenUsed() === true) {
+        if ($doiDataVo->hasBeenUsed() === true)
+        {
             throw new DoiException(
                 DoiConstants::ERR_VALIDATION_HAS_BEEN_USED_CODE,
                 DoiConstants::ERR_VALIDATION_HAS_BEEN_USED_MESSAGE
@@ -235,12 +138,13 @@ class Doi
 
         // test for timeout
 
-        if ($doiDataVo->isTimedOut($allowMaxHours) === true) {
+        if ($doiDataVo->isTimedOut($allowMaxHours) === true)
+        {
             $doiDataVo
                 ->setStatus(DoiConstants::STATUS_TIMEOUT)
                 ->setUpdatedAt(time());
 
-            $this->_update($doiDataVo);
+            $this->update($doiDataVo);
 
             throw new DoiException(
                 DoiConstants::ERR_VALIDATION_HAS_MAXED_OUT_HOURS_CODE,
@@ -256,14 +160,12 @@ class Doi
             ->setStatus(DoiConstants::STATUS_USED)
             ->setUpdatedAt(time());
 
-        $this->_update($doiDataVo);
+        $this->update($doiDataVo);
 
         // ----------------------------------
 
         return $doiDataVo;
     }
-
-    // ######################################
 
     /**
      * @param string $token
@@ -281,10 +183,107 @@ class Doi
 
         // send email
 
-        $this->_sendEmail($doiDataVo);
+        $this->sendEmail($doiDataVo);
 
         // ----------------------------------
 
         return $doiDataVo;
+    }
+
+    /**
+     * @return DoiDatabaseInterface
+     */
+    private function getDoiDatabaseHandler()
+    {
+        return $this->doiDatabaseHandler;
+    }
+
+    /**
+     * @return DoiEmailInterface
+     */
+    private function getDoiEmailHandler()
+    {
+        return $this->doiEmailHandler;
+    }
+
+    /**
+     * @param $length
+     * @param $characters
+     *
+     * @return string
+     */
+    private function createToken($length, $characters)
+    {
+        $randomString = '';
+
+        // generate token
+        for ($i = 0; $i < $length; $i++)
+        {
+            $randomString .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        return $randomString;
+    }
+
+    /**
+     * @param DoiDataVoInterface $doiDataVo
+     *
+     * @return bool
+     * @throws DoiException
+     */
+    private function update(DoiDataVoInterface $doiDataVo)
+    {
+        $response = $this
+            ->getDoiDatabaseHandler()
+            ->update($doiDataVo);
+
+        if ($response === false)
+        {
+            throw new DoiException(
+                DoiConstants::ERR_DATABASE_COULD_NOT_SAVE_DATA_CODE,
+                DoiConstants::ERR_DATABASE_COULD_NOT_SAVE_DATA_MESSAGE
+            );
+        }
+
+        return true;
+    }
+
+    /**
+     * @param DoiDataVoInterface $doiDataVo
+     *
+     * @return bool
+     * @throws DoiException
+     */
+    private function sendEmail(DoiDataVoInterface $doiDataVo)
+    {
+        $response = $this
+            ->getDoiEmailHandler()
+            ->send($doiDataVo);
+
+        if ($response === false)
+        {
+            $doiDataVo
+                ->setStatus(DoiConstants::STATUS_SENT_ERR)
+                ->setUpdatedAt(time());
+
+            $this->update($doiDataVo);
+
+            throw new DoiException(
+                DoiConstants::ERR_EMAIL_COULD_NOT_SEND_CODE,
+                DoiConstants::ERR_EMAIL_COULD_NOT_SEND_MESSAGE
+            );
+        }
+
+        // ----------------------------------
+
+        $doiDataVo
+            ->setStatus(DoiConstants::STATUS_SENT)
+            ->setUpdatedAt(time());
+
+        $this->update($doiDataVo);
+
+        // ----------------------------------
+
+        return true;
     }
 }
