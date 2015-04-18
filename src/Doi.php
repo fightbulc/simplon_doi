@@ -138,15 +138,27 @@ class Doi
 
         // ----------------------------------
 
-        // looks cool - save as used
+        return $doiDataVo;
+    }
 
+    /**
+     * @param string $token
+     * @param int    $allowMaxHours
+     *
+     * @return DoiDataVo
+     * @throws DoiException
+     */
+    public function complete($token, $allowMaxHours = 24)
+    {
+        // validate
+        $doiDataVo = $this->validate($token, $allowMaxHours);
+
+        // set state
         $doiDataVo
             ->setStatus(DoiConstants::STATUS_USED)
             ->setUpdatedAt(time());
 
         $this->update($doiDataVo);
-
-        // ----------------------------------
 
         return $doiDataVo;
     }
@@ -166,16 +178,29 @@ class Doi
      */
     private function createToken($length)
     {
-        $randomString = '';
+        $token = '';
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
         // generate token
         for ($i = 0; $i < $length; $i++)
         {
-            $randomString .= $characters[rand(0, strlen($characters) - 1)];
+            $token .= $characters[rand(0, strlen($characters) - 1)];
         }
 
-        return $randomString;
+        try
+        {
+            // test if token exists
+            $this->fetch($token);
+
+            // token exists already
+            return $this->createToken($length);
+        }
+        catch (DoiException $e)
+        {
+        }
+
+        // we got a unique token
+        return $token;
     }
 
     /**

@@ -112,6 +112,13 @@ $token = $_GET['token']; // Pqb2UgtHG0MgIDgI
 
 // validate
 $doiDataVo = $doi->validate($token); // throws DoiException or returns DoiDataVo
+
+// do whatever needs to be done
+// ...
+// ...
+
+// close + invalidate token
+$doi->complete($token);
 ```
 
 #### Validation options
