@@ -142,17 +142,13 @@ class Doi
     }
 
     /**
-     * @param string $token
-     * @param int    $allowMaxHours
+     * @param DoiDataVo $doiDataVo
      *
      * @return DoiDataVo
      * @throws DoiException
      */
-    public function complete($token, $allowMaxHours = 24)
+    public function complete(DoiDataVo $doiDataVo)
     {
-        // validate
-        $doiDataVo = $this->validate($token, $allowMaxHours);
-
         // set state
         $doiDataVo
             ->setStatus(DoiConstants::STATUS_USED)

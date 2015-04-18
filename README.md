@@ -118,7 +118,7 @@ $doiDataVo = $doi->validate($token); // throws DoiException or returns DoiDataVo
 // ...
 
 // close + invalidate token
-$doi->complete($token);
+$doi->complete($doiDataVo);
 ```
 
 #### Validation options
