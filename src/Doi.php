@@ -142,12 +142,12 @@ class Doi
     }
 
     /**
-     * @param DoiDataVo $doiDataVo
+     * @param DoiDataVoInterface $doiDataVo
      *
      * @return DoiDataVo
      * @throws DoiException
      */
-    public function complete(DoiDataVo $doiDataVo)
+    public function complete(DoiDataVoInterface $doiDataVo)
     {
         // set state
         $doiDataVo
