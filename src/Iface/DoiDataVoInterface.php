@@ -39,26 +39,26 @@ interface DoiDataVoInterface
     /**
      * @return array
      */
-    public function getConnectorDataArray();
+    public function getDataArray();
 
     /**
      * @param array $data
      *
      * @return DoiDataVo
      */
-    public function setConnectorDataArray(array $data);
+    public function setDataArray(array $data);
 
     /**
      * @param string $doiConnectorDataJson
      *
      * @return DoiDataVoInterface
      */
-    public function setConnectorDataJson($doiConnectorDataJson);
+    public function setDataJson($doiConnectorDataJson);
 
     /**
      * @return string
      */
-    public function getConnectorDataJson();
+    public function getDataJson();
 
     /**
      * @param int $status

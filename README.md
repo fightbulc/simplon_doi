@@ -37,9 +37,9 @@ You will also need the following table in your database. ```Table name``` and ``
 
 ```sql
 CREATE TABLE `simplon_doi` (
-  `token` varchar(40) NOT NULL DEFAULT '',
-  `connector` char(15) NOT NULL DEFAULT '',
-  `connector_data_json` text NOT NULL,
+  `token` varchar(6) NOT NULL DEFAULT '',
+  `connector` char(6) NOT NULL DEFAULT '',
+  `data_json` text NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` int(10) unsigned NOT NULL,
   `updated_at` int(10) unsigned NOT NULL,
@@ -63,17 +63,18 @@ $doi = new \Simplon\Doi\Doi(
     new \Sample\Handler\SampleDatabaseHandler()
 );
 
-// create data
-$createVo = (new \Simplon\Doi\Vo\DoiCreateVo())
-    ->setConnector('NEWSLETTER')
-    ->setConnectorDataArray([
-        'email'     => 'tom@hamburg.de',
-        'firstName' => 'Tom',
-        'lastName'  => 'Berger',
-    ]);
+// connecor is an identifier for your internal reference
+$connector = 'NL'; // max. 6 chars
+
+// data connected to this doi
+$data = [
+    'email'     => 'tom@hamburg.de',
+    'firstName' => 'Tom',
+    'lastName'  => 'Berger',
+];
     
 // create entry in database
-$doiDataVo = $doi->create($createVo);
+$doiDataVo = $doi->create($connector, $data); // 56,800,235,584 possible tokens
 ```
 
 Now you have all related data within ```$doiDataVo```. Now you need to let your user know. Probably you will send an email which includes a link which points back to your app.

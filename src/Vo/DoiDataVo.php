@@ -25,7 +25,7 @@ class DoiDataVo implements DoiDataVoInterface
     /**
      * @var string
      */
-    private $connectorDataJson;
+    private $dataJson;
 
     /**
      * @var string
@@ -77,7 +77,7 @@ class DoiDataVo implements DoiDataVoInterface
      */
     public function setConnector($connector)
     {
-        $this->connector = $connector;
+        $this->connector = preg_replace('/^(\w{0,6}).*$/u', '\\1', $connector);
 
         return $this;
     }
@@ -87,9 +87,9 @@ class DoiDataVo implements DoiDataVoInterface
      *
      * @return DoiDataVo
      */
-    public function setConnectorDataArray(array $data)
+    public function setDataArray(array $data)
     {
-        $this->connectorDataJson = json_encode($data);
+        $this->dataJson = json_encode($data);
 
         return $this;
     }
@@ -97,19 +97,19 @@ class DoiDataVo implements DoiDataVoInterface
     /**
      * @return array
      */
-    public function getConnectorDataArray()
+    public function getDataArray()
     {
-        return (array)json_decode($this->connectorDataJson, true);
+        return (array)json_decode($this->dataJson, true);
     }
 
     /**
-     * @param string $connectorDataJson
+     * @param string $dataJson
      *
      * @return DoiDataVo
      */
-    public function setConnectorDataJson($connectorDataJson)
+    public function setDataJson($dataJson)
     {
-        $this->connectorDataJson = $connectorDataJson;
+        $this->dataJson = $dataJson;
 
         return $this;
     }
@@ -117,9 +117,9 @@ class DoiDataVo implements DoiDataVoInterface
     /**
      * @return string
      */
-    public function getConnectorDataJson()
+    public function getDataJson()
     {
-        return (string)$this->connectorDataJson;
+        return (string)$this->dataJson;
     }
 
     /**

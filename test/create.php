@@ -2,15 +2,14 @@
 
 require __DIR__ . '/init.php';
 
-// create data
-$createVo = (new \Simplon\Doi\Vo\DoiCreateVo())
-    ->setConnector('NEWSLETTER')
-    ->setConnectorDataArray([
-        'email'     => 'tom@hamburg.de',
-        'firstName' => 'Tom',
-        'lastName'  => 'Berger',
-    ]);
+$connector = 'nl01';
+
+$data = [
+    'email'     => 'tom@hamburg.de',
+    'firstName' => 'Tom',
+    'lastName'  => 'Berger',
+];
 
 // save to database
-$doiDataVo = $doi->create($createVo);
-var_dump([$doiDataVo, $doiDataVo->getConnectorDataJson()]);
+$doiDataVo = $doi->create($connector, $data);
+var_dump([$doiDataVo, $doiDataVo->getDataJson()]);

@@ -4,7 +4,6 @@ namespace Simplon\Doi;
 
 use Simplon\Doi\Iface\DoiDatabaseInterface;
 use Simplon\Doi\Iface\DoiDataVoInterface;
-use Simplon\Doi\Vo\DoiCreateVo;
 use Simplon\Doi\Vo\DoiDataVo;
 
 /**
@@ -28,19 +27,18 @@ class Doi
     }
 
     /**
-     * @param DoiCreateVo $doiCreateVo
+     * @param string $connector
+     * @param array  $data
+     * @param int    $tokenLength
      *
      * @return DoiDataVoInterface
      * @throws DoiException
      */
-    public function create(DoiCreateVo $doiCreateVo)
+    public function create($connector, array $data, $tokenLength = DoiConstants::TOKEN_LENGTH)
     {
         // create token
 
-        $token = $this->createToken(
-            $doiCreateVo->getTokenLenght(),
-            $doiCreateVo->getTokenCharacters()
-        );
+        $token = $this->createToken($tokenLength);
 
         // ----------------------------------
 
@@ -49,8 +47,8 @@ class Doi
         /** @var DoiDataVoInterface $doiDataVo */
         $doiDataVo = (new DoiDataVo())
             ->setToken($token)
-            ->setConnector($doiCreateVo->getConnector())
-            ->setConnectorDataArray($doiCreateVo->getConnectorDataArray())
+            ->setConnector($connector)
+            ->setDataArray($data)
             ->setStatus(DoiConstants::STATUS_CREATED)
             ->setCreatedAt(time())
             ->setUpdatedAt(time());
@@ -162,14 +160,14 @@ class Doi
     }
 
     /**
-     * @param $length
-     * @param $characters
+     * @param int $length
      *
      * @return string
      */
-    private function createToken($length, $characters)
+    private function createToken($length)
     {
         $randomString = '';
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
         // generate token
         for ($i = 0; $i < $length; $i++)

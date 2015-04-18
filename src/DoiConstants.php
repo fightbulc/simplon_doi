@@ -7,17 +7,16 @@ namespace Simplon\Doi;
  * @package Simplon\Doi
  * @author  Tino Ehrich (tino@bigpun.me)
  */
-class Doiconstants
+class DoiConstants
 {
+    const TOKEN_LENGTH = 6;
+    const TOKEN_TIMEOUT_DEFAULT = 24;
+
     const STATUS_CREATED = 0;
     const STATUS_SENT = 1;
     const STATUS_SENT_ERR = 2;
     const STATUS_USED = 3;
     const STATUS_TIMEOUT = 4;
-
-    const TOKEN_TIMEOUT_DEFAULT = 24;
-
-    // --------------------------------------
 
     const ERR_DATABASE_COULD_NOT_SAVE_DATA_CODE = 1000;
     const ERR_DATABASE_COULD_NOT_SAVE_DATA_MESSAGE = 'Could not save data into database.';
