@@ -135,7 +135,7 @@ class DoiDataVo implements DoiDataVoInterface
      */
     public function hasValidStatus()
     {
-        return in_array($this->getStatus(), [DoiConstants::STATUS_CREATED, DoiConstants::STATUS_SENT]);
+        return $this->getStatus() === DoiConstants::STATUS_CREATED;
     }
 
     /**
@@ -144,14 +144,6 @@ class DoiDataVo implements DoiDataVoInterface
     public function hasBeenUsed()
     {
         return $this->getStatus() === DoiConstants::STATUS_USED;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasBeenSent()
-    {
-        return $this->getStatus() === DoiConstants::STATUS_SENT;
     }
 
     /**
@@ -243,10 +235,12 @@ class DoiDataVo implements DoiDataVoInterface
     }
 
     /**
+     * @param int $allowMaxHours
+     *
      * @return bool
      */
-    public function isUsable()
+    public function isUsable($allowMaxHours = DoiConstants::TOKEN_TIMEOUT_DEFAULT)
     {
-        return $this->hasValidStatus() && $this->isTimedOut() === false;
+        return $this->hasValidStatus() && $this->isTimedOut($allowMaxHours) === false;
     }
 } 

@@ -17,11 +17,7 @@ A simple double opt-in verification w/ injectable DB and Email handler.
 
 One of my projects has a process for ```email verification``` and another one for ```password reset```. In both cases I am generating a token, save it to the database and send an email to the user to verify the request. Both scenarios use independent setups since one has been implemented in the very beginning and the other one a couple of months later.
 
-Now I have to implement another process which requires a certain group of users to confirm an ```email address```. Therefore, it's time to ```refactor``` and align our implementations to one unified solution.
-
-```Simplon Doi``` has a flexible setup. It will leave it up to you how to interact with your database and sending out emails. The only thing it takes care of is its ```core``` functionality.
-
-A sample implementation can be found within the [included test folder](https://github.com/fightbulc/simplon_doi/tree/master/test).
+```Simplon Doi``` has a flexible setup. It will leave it up to you how to interact with your database. The only thing it takes care of is its ```core``` functionality: creation and validation of a double opt-in process.
 
 -------------------------------------------------
 
@@ -42,7 +38,7 @@ You will also need the following table in your database. ```Table name``` and ``
 ```sql
 CREATE TABLE `simplon_doi` (
   `token` varchar(40) NOT NULL DEFAULT '',
-  `connector` char(4) NOT NULL DEFAULT '',
+  `connector` char(15) NOT NULL DEFAULT '',
   `connector_data_json` text NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` int(10) unsigned NOT NULL,
@@ -57,7 +53,7 @@ CREATE TABLE `simplon_doi` (
 
 #### Creating a Doi
 
-The following steps create a ```Doi```, save it to the database and send an email to the given address:
+The following steps create a ```Doi``` and save it to the database:
 
 ```php
 require __DIR__ . '/vendor/autoload.php';
@@ -67,40 +63,35 @@ $doi = new \Simplon\Doi\Doi(
     new \Sample\Handler\SampleDatabaseHandler()
 );
 
-// set custom connector data (needs at least an email field)
-$sampleConnectorDataVo = (new \Sample\SampleConnectorDataVo())
-    ->setEmail('tom@hamburg.de')
-    ->setFirstname('Tom')
-    ->setLastname('Berger');
-
 // create data
 $createVo = (new \Simplon\Doi\Vo\DoiCreateVo())
-    ->setConnector('EMVAL')
-    ->setConnectorDataVo($sampleConnectorDataVo);
-
+    ->setConnector('NEWSLETTER')
+    ->setConnectorDataArray([
+        'email'     => 'tom@hamburg.de',
+        'firstName' => 'Tom',
+        'lastName'  => 'Berger',
+    ]);
+    
 // create entry in database
 $doiDataVo = $doi->create($createVo);
 ```
 
-Now you have all related data within ```$doiDataVo``` and its up to you how you want to push the Doi-URL to the user.
-
-### Sending Doi via email
-
-Doi can also take care of sending an email to the user with all relevant data. For this you need to make use of the ```DoiEmailInterface```.
-Following an example of how to send an email.
+Now you have all related data within ```$doiDataVo```. Now you need to let your user know. Probably you will send an email which includes a link which points back to your app.
+The app needs to handle the request and pass on the ```TOKEN``` to the validation process.
 
 ```php
-// we use $doiDataVo from above
-$doi->sendEmail(
-    new \Sample\Handler\SampleEmailHandler(),
-    $doiDataVo
-);
+// THE FOLLOWING PART MUST FIT YOUR EMAIL SOLUTION
+// SIMPLON\DOI DOES NOT OFFER ANY SOLUTION TO THIS
 
-// you also have the possibility to resend an email
-$doi->resendEmail(
-    new \Sample\Handler\SampleEmailHandler(),
-    $doiToken
-);
+// build callback url
+$callbackUrl = 'https://yourapp.com?token='  . $doiDataVo->getToken();
+
+// email and your message
+$userEmail = $doiDataVo->getContentDataArray()['email]);
+$text = 'Dear user, please confirm by clicking on the following link: ' . $callbackUrl;
+
+$email = new MyEmailSolution();
+$email->send($userEmail, $text);
 ```
 
 #### Validating a Doi
@@ -110,10 +101,9 @@ If the user comes back via a callback link you could use the following code to v
 ```php
 require __DIR__ . '/vendor/autoload.php';
 
-// Doi instance w/ our handlers
+// Doi instance with database handler
 $doi = new \Simplon\Doi\Doi(
-    new \Sample\Handler\SampleDatabaseHandler(),
-    new \Sample\Handler\SampleEmailHandler()
+    new \Sample\Handler\SampleDatabaseHandler()
 );
 
 // get token from GET param
@@ -123,13 +113,94 @@ $token = $_GET['token']; // Pqb2UgtHG0MgIDgI
 $doiDataVo = $doi->validate($token); // throws DoiException or returns DoiDataVo
 ```
 
+#### Validation options
+
+```php
+// validation has to be within a given time frame
+$doiDataVo = $doi->validate($token, 2); // has to be within 2 hours; default: 24 hours
+
+// figure how much time is left until token expires
+$doiDataVo->getTimeOutLeft(); // returns amount in seconds
+$doiDataVo->getTimeOutLeft(2); // run against time limit of 2 hours
+
+// is token timed out?
+$doiDataVo->isTimedOut(); // returns true/false
+$doiDataVo->isTimedOut(2); // run against time limit of 2 hours
+
+// is this token still usable? takes time and state of token into account
+$doiDataVo->isUsable(); // true if state is 0 and not timed out
+$doiDataVo->isUsable(2); // run against time limit of 2 hours
+```
+
 -------------------------------------------------
 
 ### Setup: Database handler
 
--------------------------------------------------
+A very rough abstraction of a sample database handler.
 
-### Setup: Email handler
+```php
+class SampleDatabaseHandler implements DoiDatabaseInterface
+{
+    /**
+     * @var string
+     */
+    private $databaseName = 'testing';
+
+    /**
+     * @var string
+     */
+    private $tableName = 'simplon_doi';
+
+    /**
+     * @return resource
+     */
+    private $dbh;
+
+    /**
+     * @param DoiDataVoInterface $doiDataVo
+     *
+     * @return bool
+     */
+    public function save(DoiDataVoInterface $doiDataVo)
+    {
+    	// write data to database
+    }
+
+    /**
+     * @param $token
+     *
+     * @return bool|(DoiDataVo
+     */
+    public function fetch($token)
+    {
+    	// fetch data from database
+    }
+
+    /**
+     * @param DoiDataVoInterface $doiDataVo
+     *
+     * @return bool
+     */
+    public function update(DoiDataVoInterface $doiDataVo)
+    {
+    	// update data on existing entry
+    }
+
+    /**
+     * @return resource
+     */
+    private function getDbh()
+    {
+        if ($this->dbh === null)
+        {
+            $this->dbh = mysql_connect('localhost', 'rootuser', 'rootuser');
+            mysql_query('use ' . $this->databaseName, $this->dbh);
+        }
+
+        return $this->dbh;
+    }
+}
+```
 
 -------------------------------------------------
 
