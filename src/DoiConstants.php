@@ -25,9 +25,6 @@ class Doiconstants
     const ERR_DATABASE_COULD_NOT_FETCH_DATA_CODE = 1001;
     const ERR_DATABASE_COULD_NOT_FETCH_DATA_MESSAGE = 'Could not fetch data from database.';
 
-    const ERR_EMAIL_COULD_NOT_SEND_CODE = 2000;
-    const ERR_EMAIL_COULD_NOT_SEND_MESSAGE = 'Could not send email.';
-
     const ERR_VALIDATION_HAS_BEEN_USED_CODE = 3000;
     const ERR_VALIDATION_HAS_BEEN_USED_MESSAGE = 'This token has already been used.';
 

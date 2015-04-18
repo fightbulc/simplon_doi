@@ -3,6 +3,7 @@
 namespace Simplon\Doi\Iface;
 
 use Simplon\Doi\DoiConstants;
+use Simplon\Doi\Vo\DoiDataVo;
 
 /**
  * Interface DoiDataVoInterface
@@ -36,16 +37,28 @@ interface DoiDataVoInterface
     public function getConnector();
 
     /**
-     * @param DoiConnectorDataVoInterface $doiConnectorDataVo
+     * @return array
+     */
+    public function getConnectorDataArray();
+
+    /**
+     * @param array $data
+     *
+     * @return DoiDataVo
+     */
+    public function setConnectorDataArray(array $data);
+
+    /**
+     * @param string $doiConnectorDataJson
      *
      * @return DoiDataVoInterface
      */
-    public function setConnectorDataVo(DoiConnectorDataVoInterface $doiConnectorDataVo);
+    public function setConnectorDataJson($doiConnectorDataJson);
 
     /**
-     * @return DoiConnectorDataVoInterface
+     * @return string
      */
-    public function getConnectorDataVo();
+    public function getConnectorDataJson();
 
     /**
      * @param int $status

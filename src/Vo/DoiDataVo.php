@@ -3,34 +3,61 @@
 namespace Simplon\Doi\Vo;
 
 use Simplon\Doi\DoiConstants;
-use Simplon\Doi\Iface\DoiConnectorDataVoInterface;
 use Simplon\Doi\Iface\DoiDataVoInterface;
 
+/**
+ * DoiDataVo
+ * @package Simplon\Doi\Vo
+ * @author  Tino Ehrich (tino@bigpun.me)
+ */
 class DoiDataVo implements DoiDataVoInterface
 {
-    protected $_token;
-    protected $_connector;
-    protected $_connectorDataVo;
-    protected $_status;
-    protected $_createdAt;
-    protected $_updatedAt;
+    /**
+     * @var string
+     */
+    private $token;
+
+    /**
+     * @var string
+     */
+    private $connector;
+
+    /**
+     * @var string
+     */
+    private $connectorDataJson;
+
+    /**
+     * @var string
+     */
+    private $status;
+
+    /**
+     * @var string
+     */
+    private $createdAt;
+
+    /**
+     * @var string
+     */
+    private $updatedAt;
 
     /**
      * @return string
      */
     public function getToken()
     {
-        return (string)$this->_token;
+        return (string)$this->token;
     }
 
     /**
-     * @param mixed $token
+     * @param string $token
      *
-     * @return $this
+     * @return DoiDataVo
      */
     public function setToken($token)
     {
-        $this->_token = $token;
+        $this->token = $token;
 
         return $this;
     }
@@ -40,39 +67,59 @@ class DoiDataVo implements DoiDataVoInterface
      */
     public function getConnector()
     {
-        return (string)$this->_connector;
+        return (string)$this->connector;
     }
 
     /**
-     * @param mixed $connector
+     * @param string $connector
      *
-     * @return $this
+     * @return DoiDataVo
      */
     public function setConnector($connector)
     {
-        $this->_connector = $connector;
+        $this->connector = $connector;
 
         return $this;
     }
 
     /**
-     * @param DoiConnectorDataVoInterface $sampleConnectorDataVo
+     * @param array $data
      *
-     * @return $this
+     * @return DoiDataVo
      */
-    public function setConnectorDataVo(DoiConnectorDataVoInterface $sampleConnectorDataVo)
+    public function setConnectorDataArray(array $data)
     {
-        $this->_connectorDataVo = $sampleConnectorDataVo;
+        $this->connectorDataJson = json_encode($data);
 
         return $this;
     }
 
     /**
-     * @return DoiConnectorDataVoInterface
+     * @return array
      */
-    public function getConnectorDataVo()
+    public function getConnectorDataArray()
     {
-        return $this->_connectorDataVo;
+        return (array)json_decode($this->connectorDataJson, true);
+    }
+
+    /**
+     * @param string $connectorDataJson
+     *
+     * @return DoiDataVo
+     */
+    public function setConnectorDataJson($connectorDataJson)
+    {
+        $this->connectorDataJson = $connectorDataJson;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getConnectorDataJson()
+    {
+        return (string)$this->connectorDataJson;
     }
 
     /**
@@ -80,7 +127,7 @@ class DoiDataVo implements DoiDataVoInterface
      */
     public function getStatus()
     {
-        return (int)$this->_status;
+        return (int)$this->status;
     }
 
     /**
@@ -116,13 +163,13 @@ class DoiDataVo implements DoiDataVoInterface
     }
 
     /**
-     * @param mixed $status
+     * @param string $status
      *
-     * @return $this
+     * @return DoiDataVo
      */
     public function setStatus($status)
     {
-        $this->_status = $status;
+        $this->status = $status;
 
         return $this;
     }
@@ -132,17 +179,17 @@ class DoiDataVo implements DoiDataVoInterface
      */
     public function getCreatedAt()
     {
-        return (int)$this->_createdAt;
+        return (int)$this->createdAt;
     }
 
     /**
-     * @param mixed $createdAt
+     * @param int $createdAt
      *
-     * @return $this
+     * @return DoiDataVo
      */
     public function setCreatedAt($createdAt)
     {
-        $this->_createdAt = $createdAt;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -152,17 +199,17 @@ class DoiDataVo implements DoiDataVoInterface
      */
     public function getUpdatedAt()
     {
-        return (int)$this->_updatedAt;
+        return (int)$this->updatedAt;
     }
 
     /**
-     * @param mixed $updateAt
+     * @param int $updateAt
      *
-     * @return $this
+     * @return DoiDataVo
      */
     public function setUpdatedAt($updateAt)
     {
-        $this->_updatedAt = $updateAt;
+        $this->updatedAt = $updateAt;
 
         return $this;
     }

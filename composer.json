@@ -1,13 +1,12 @@
 {
     "name": "simplon/doi",
-    "description": "Simple double opt-in handler w/ possibility to inject your own DB and Email handler",
+    "description": "Simple double opt-in handler w/ database handling via interface",
     "homepage": "https://github.com/fightbulc/simplon_doi",
     "type": "library",
     "keywords": [
         "double opt-in",
         "verification",
-        "database",
-        "email"
+        "database"
     ],
     "license": "MIT",
     "authors": [

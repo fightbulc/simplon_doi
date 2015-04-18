@@ -2,8 +2,6 @@
 
 namespace Simplon\Doi\Vo;
 
-use Simplon\Doi\Iface\DoiConnectorDataVoInterface;
-
 /**
  * DoiCreateVo
  * @package Simplon\Doi\Vo
@@ -17,9 +15,9 @@ class DoiCreateVo
     private $connector;
 
     /**
-     * @var DoiConnectorDataVo
+     * @var array
      */
-    private $connectorDataVo;
+    private $connectorDataArray;
 
     /**
      * @var int
@@ -52,23 +50,23 @@ class DoiCreateVo
     }
 
     /**
-     * @param DoiConnectorDataVoInterface $sampleConnectorDataVo
+     * @param array $data
      *
      * @return DoiCreateVo
      */
-    public function setConnectorDataVo(DoiConnectorDataVoInterface $sampleConnectorDataVo)
+    public function setConnectorDataArray(array $data)
     {
-        $this->connectorDataVo = $sampleConnectorDataVo;
+        $this->connectorDataArray = $data;
 
         return $this;
     }
 
     /**
-     * @return DoiConnectorDataVoInterface
+     * @return array
      */
-    public function getConnectorDataVo()
+    public function getConnectorDataArray()
     {
-        return $this->connectorDataVo;
+        return $this->connectorDataArray;
     }
 
     /**

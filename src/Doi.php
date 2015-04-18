@@ -4,7 +4,6 @@ namespace Simplon\Doi;
 
 use Simplon\Doi\Iface\DoiDatabaseInterface;
 use Simplon\Doi\Iface\DoiDataVoInterface;
-use Simplon\Doi\Iface\DoiEmailInterface;
 use Simplon\Doi\Vo\DoiCreateVo;
 use Simplon\Doi\Vo\DoiDataVo;
 
@@ -19,11 +18,6 @@ class Doi
      * @var DoiDatabaseInterface
      */
     private $doiDatabaseHandler;
-
-    /**
-     * @var DoiEmailInterface
-     */
-    private $doiEmailHandler;
 
     /**
      * @param DoiDatabaseInterface $doiDatabaseInterface
@@ -56,7 +50,7 @@ class Doi
         $doiDataVo = (new DoiDataVo())
             ->setToken($token)
             ->setConnector($doiCreateVo->getConnector())
-            ->setConnectorDataVo($doiCreateVo->getConnectorDataVo())
+            ->setConnectorDataArray($doiCreateVo->getConnectorDataArray())
             ->setStatus(DoiConstants::STATUS_CREATED)
             ->setCreatedAt(time())
             ->setUpdatedAt(time());
@@ -153,68 +147,6 @@ class Doi
             ->setUpdatedAt(time());
 
         $this->update($doiDataVo);
-
-        // ----------------------------------
-
-        return $doiDataVo;
-    }
-
-    /**
-     * @param DoiEmailInterface  $doiEmailInterface
-     * @param DoiDataVoInterface $doiDataVo
-     *
-     * @return bool
-     * @throws DoiException
-     */
-    public function sendEmail(DoiEmailInterface $doiEmailInterface, DoiDataVoInterface $doiDataVo)
-    {
-        $response = $doiEmailInterface->send($doiDataVo);
-
-        if ($response === false)
-        {
-            $doiDataVo
-                ->setStatus(DoiConstants::STATUS_SENT_ERR)
-                ->setUpdatedAt(time());
-
-            $this->update($doiDataVo);
-
-            throw new DoiException(
-                DoiConstants::ERR_EMAIL_COULD_NOT_SEND_CODE,
-                DoiConstants::ERR_EMAIL_COULD_NOT_SEND_MESSAGE
-            );
-        }
-
-        // ----------------------------------
-
-        $doiDataVo
-            ->setStatus(DoiConstants::STATUS_SENT)
-            ->setUpdatedAt(time());
-
-        $this->update($doiDataVo);
-
-        // ----------------------------------
-
-        return true;
-    }
-
-    /**
-     * @param DoiEmailInterface $doiEmailInterface
-     * @param string            $token
-     *
-     * @return bool|DoiDataVoInterface
-     * @throws DoiException
-     */
-    public function resendEmail(DoiEmailInterface $doiEmailInterface, $token)
-    {
-        // fetch data
-
-        $doiDataVo = $this->fetch($token);
-
-        // ----------------------------------
-
-        // send email
-
-        $this->sendEmail($doiEmailInterface, $doiDataVo);
 
         // ----------------------------------
 
