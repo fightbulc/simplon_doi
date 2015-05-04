@@ -9,7 +9,7 @@
 
 # Simplon Doi
 
-A simple double opt-in verification w/ injectable DB and Email handler.
+A simple double opt-in verification with injectable DB handler.
 
 -------------------------------------------------
 
